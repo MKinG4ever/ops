@@ -1,25 +1,53 @@
 import os
 import platform
-import random as rnd
 import sys
-import time
+import string
+from random import random as rnd
+from time import sleep as dly
+from time import time, ctime
 
 
 def main():
-    stamp = time.time()
-    reg_keys = ['secure', 'sex', '69']
+    """
+    ops: os, platform, system get system information, to act base on.
+    Powered by Python author: NightFox v0.02
+    """
+    key_guard()  # ask for safety key
+    info()  # gathering data
 
-    if len(sys.argv) > 1 and sys.argv[1] in reg_keys:  # in-line
-        export()
-    elif input('Enter Your Registration key: ') in reg_keys:  # run-time
-        export()
+
+def echo(value):
+    """echo, print, write, this function have a lot of names"""
+    for line in value.split('\n'):
+        char = str()
+        for ch in line:
+            char += ch
+            print(f'\r{char}', end='')
+            if not ch == ' ':
+                dly(rnd() / 3.14159264)
+    if str(value).endswith('\n'):
+        print()
+
+
+def key_guard(keyword: bool = True):
+    """Create a safety key to protect your Data/System"""
+    if keyword:
+        _keys = ['secure', 'sex', '69', 'kiss', 'love']
+        if not input('Enter your safety keyword: ') in _keys:
+            echo('Access Denied.')
+            sys.exit()
+        else:
+            echo('Initiation ...')
+            echo(f'{ctime()}\n')
+            dly(0.1)
     else:
-        print('Access Deny!')
-        print(f'loop complete in: {time.time() - stamp}')
+        # feature for enable|disable key_guard safety
+        # sys.exit()
+        echo('You are disabling safety keyword !!!\n')
 
 
 def info():
-    """serious information about target system"""
+    # Gathering data
     _info = {
         # user_info
         'getlogin': os.getlogin(),
@@ -37,7 +65,7 @@ def info():
         'pid': os.getpid(),
         'ppid': os.getppid(),
         'argv': sys.argv,
-        'time': [time.time(), time.ctime()],
+        'time': [ctime(), time()],
         # more info
         'cpu_count': os.cpu_count(),
         'machine': platform.machine(),
@@ -52,36 +80,15 @@ def info():
         'encoding': sys.getdefaultencoding(),
         'cache': sys.path_importer_cache,
     }
+    # for 'Windows' os, find and add the HDD Drives
+    if _info['system'].lower() == 'windows':
+        _info['drivers'] = [f'{i}:\\' for i in string.ascii_uppercase if os.path.isdir(f'{i}:\\')]
+    # Presentation
+    for key, val in _info.items():
+        echo(f'{key:15}: ')
+        print(val)
+    # return data
     return _info
-
-
-def dly(sec=None) -> None:
-    """delay function for make interrupt"""
-    if sec:
-        time.sleep(sec)
-    else:
-        time.sleep(rnd.random() / 3.14156294)
-
-
-def writeln(value: str):
-    """echo, print, write, this function have a lot of names"""
-    chars = str()
-    for line in str(value).split('\n'):
-        for char in line:
-            chars += char
-            print(f'\r{chars}', end='')
-            dly()
-        chars = str()
-        dly()
-
-
-def export():
-    """export information"""
-    data = info()
-    for k, v in data.items():
-        writeln(f'{k}: ')
-        print(v)
-        dly()
 
 
 if __name__ == '__main__':
