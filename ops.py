@@ -1,94 +1,112 @@
 import os
 import platform
-import sys
 import string
-from random import random as rnd
-from time import sleep as dly
-from time import time, ctime
+import sys
+import time
 
 
 def main():
+    information = OPS()
+    information.present()
+    information.option()
+
+
+class OPS:
     """
     ops: os, platform, system get system information, to act base on.
-    Powered by Python author: NightFox v0.02
+    author: NightFox | OPS v0.1
     """
-    key_guard()  # ask for safety key
-    info()  # gathering data
 
+    def __init__(self):
+        self.info = self.info()  # Get information
+        self.readable = '\n'.join([f'{k:22}|{v}' for k, v in self.info.items()])
+        self.version = '0.1'
 
-def echo(value):
-    """echo, print, write, this function have a lot of names"""
-    for line in value.split('\n'):
-        char = str()
-        for ch in line:
-            char += ch
-            print(f'\r{char}', end='')
-            if not ch == ' ':
-                dly(rnd() / 3.14159264)
-    if str(value).endswith('\n'):
-        print()
+    def __iter__(self):
+        return iter(self.info.items())
 
+    def __len__(self):
+        return len(self.info)
 
-def key_guard(keyword: bool = True):
-    """Create a safety key to protect your Data/System"""
-    if keyword:
-        _keys = ['secure', 'sex', '69', 'kiss', 'love']
-        if not input('Enter your safety keyword: ') in _keys:
-            echo('Access Denied.')
-            sys.exit()
-        else:
-            echo('Initiation ...')
-            echo(f'{ctime()}\n')
-            dly(0.1)
-    else:
-        # feature for enable|disable key_guard safety
-        # sys.exit()
-        echo('You are disabling safety keyword !!!\n')
+    def __repr__(self):
+        return str(self.info)
 
+    def __str__(self):
+        return str(self.info)
 
-def info():
-    # Gathering data
-    _info = {
-        # user_info
-        'getlogin': os.getlogin(),
-        'node': platform.node(),
-        'uname': platform.uname(),
-        # current_dir
-        'getcwd': os.getcwd(),
-        'path': sys.path,
-        # system_info
-        'system': platform.system(),  # Linux|Windows
-        'architecture': platform.architecture(),
-        'platform': [sys.platform, platform.platform()],
-        'version': [platform.python_version(), sys.version],
-        # runtime_info
-        'pid': os.getpid(),
-        'ppid': os.getppid(),
-        'argv': sys.argv,
-        'time': [ctime(), time()],
-        # more info
-        'cpu_count': os.cpu_count(),
-        'machine': platform.machine(),
-        'processor': platform.processor(),
-        'environ': os.environ,
-        'listdir': os.listdir(),
-        'scandir': os.scandir(),
-        'python_compiler': platform.python_compiler(),
-        'win32_edition': platform.win32_edition(),
-        'win32_is_iot': platform.win32_is_iot(),
-        'win32_ver': platform.win32_ver(),
-        'encoding': sys.getdefaultencoding(),
-        'cache': sys.path_importer_cache,
-    }
-    # for 'Windows' os, find and add the HDD Drives
-    if _info['system'].lower() == 'windows':
-        _info['drivers'] = [f'{i}:\\' for i in string.ascii_uppercase if os.path.isdir(f'{i}:\\')]
-    # Presentation
-    for key, val in _info.items():
-        echo(f'{key:15}: ')
-        print(val)
-    # return data
-    return _info
+    @staticmethod
+    def info():
+        # Gathering basic data
+        _info = {
+            # user_info
+            'getlogin': os.getlogin(),
+            'node': platform.node(),
+            # current_dir
+            'getcwd': os.getcwd(),
+            'listdir': os.listdir(),
+            'scandir': os.scandir(),
+            # system_info
+            'system': platform.system(),
+            'platform': [platform.platform(), sys.platform],
+            'processor': platform.processor(),
+            'uname': platform.uname(),
+            'architecture': platform.architecture(),
+            'machine': platform.machine(),
+            'cpu_count': os.cpu_count(),
+            # time
+            'time': time.time(),
+            'ctime': time.ctime(),
+            'tzname': time.tzname,
+            'timezone': time.timezone,
+            'altzone': time.altzone,
+            # runtime_info
+            'times': os.times(),
+            'getpid': os.getpid(),
+            'getppid': os.getppid(),
+            'environ': os.environ,
+            'get_exec_path': os.get_exec_path(),
+            'name': os.name,
+            'path': os.path,
+            'argv': sys.argv,
+            'version': sys.version,
+            # python
+            'python_compiler': platform.python_compiler(),
+            'python_implementation': platform.python_implementation(),
+            'python_version': platform.python_version(),
+            # windows
+            'win32_edition': platform.win32_edition(),
+            'win32_is_iot': platform.win32_is_iot(),
+            'win32_ver': platform.win32_ver(),
+            # more info
+            'encoding': sys.getdefaultencoding(),
+            'abort': os.abort,  # abort command
+            'exit': sys.exit,  # exit command
+        }
+        # for 'Windows' os, find and add the HDD Drives
+        if _info['system'].lower() == 'windows':
+            _info['drivers'] = [f'{i}:\\' for i in string.ascii_uppercase if os.path.isdir(f'{i}:\\')]
+        return _info
+
+    def present(self):
+        # info presentation
+        print(self.readable)
+
+    def option(self):
+        ans = input('\nOption: (export/exit)').strip()
+        if ans.lower() in ['export']:
+            self.export()
+        elif ans.lower() in ['quit', 'exit']:
+            self.exit()
+
+    def export(self):
+        # export info as text file
+        with open('ops.txt', 'w') as f:
+            f.write(self.readable)
+        print('export completed!')
+
+    def exit(self):
+        # exit function
+        self.info['exit']()
 
 
 if __name__ == '__main__':
